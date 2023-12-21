@@ -3,12 +3,6 @@ from string import ascii_uppercase
 from string import digits
 import requests
 
-
-
-
-
-
-
 # Function that generates the guess passwords (brute-force technique)
 def passwordCracker(currentPassword):
     characters = ascii_lowercase + ascii_uppercase + digits
