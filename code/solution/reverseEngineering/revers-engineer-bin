@@ -1,0 +1,6 @@
+with open('/workspaces/softwaresikkerhet-assignment4/code/solution/High-level/reverse-engineering-bin', 'rb') as f:
+    data = file.read()
+    # Søk etter strenger som ligner på brukernavn
+    usernames = re.findall(b'[a-zA-Z0-9_-]+', data)
+    for username in usernames:
+        print(username.decode('utf-8'))
